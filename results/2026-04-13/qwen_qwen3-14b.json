@@ -1,0 +1,116 @@
+{
+  "model": "qwen/qwen3-14b",
+  "run_at": "2026-04-13T05:30:50Z",
+  "memory_mb": {
+    "before": 204,
+    "after": 215
+  },
+  "aggregate": {
+    "total_cases": 10,
+    "avg_tps": 6.502,
+    "avg_latency": 52.688,
+    "total_completion_tokens": 3470
+  },
+  "cases": [
+    {
+      "id": "code-01",
+      "category": "code",
+      "title": "LRU 캐시 TypeScript 구현",
+      "latency_sec": 66.84,
+      "prompt_tokens": 93,
+      "completion_tokens": 599,
+      "tokens_per_sec": 8.96,
+      "content": ""
+    },
+    {
+      "id": "code-02",
+      "category": "code",
+      "title": "React useDebounce 훅",
+      "latency_sec": 51.8,
+      "prompt_tokens": 59,
+      "completion_tokens": 499,
+      "tokens_per_sec": 9.63,
+      "content": ""
+    },
+    {
+      "id": "reason-01",
+      "category": "reasoning",
+      "title": "SQL 쿼리 문제 진단",
+      "latency_sec": 59.38,
+      "prompt_tokens": 124,
+      "completion_tokens": 449,
+      "tokens_per_sec": 7.56,
+      "content": ""
+    },
+    {
+      "id": "reason-02",
+      "category": "reasoning",
+      "title": "알고리즘 복잡도 분석",
+      "latency_sec": 71.35,
+      "prompt_tokens": 117,
+      "completion_tokens": 399,
+      "tokens_per_sec": 5.59,
+      "content": ""
+    },
+    {
+      "id": "ko-01",
+      "category": "korean",
+      "title": "기술 문서 한국어 요약",
+      "latency_sec": 35.41,
+      "prompt_tokens": 98,
+      "completion_tokens": 199,
+      "tokens_per_sec": 5.62,
+      "content": "\n\nauth-lib v3.0에서 authenticate() 함수는 기존 콜백 방식 대신 Promise를 반환하게 변경되었습니다. 이로 인해 기존 콜백 패턴을 사용하는 코드는 런타임 시 오류가"
+    },
+    {
+      "id": "ko-02",
+      "category": "korean",
+      "title": "에러 메시지 친화 변환",
+      "latency_sec": 26.23,
+      "prompt_tokens": 73,
+      "completion_tokens": 149,
+      "tokens_per_sec": 5.68,
+      "content": ""
+    },
+    {
+      "id": "tool-01",
+      "category": "tool",
+      "title": "함수 호출 JSON 생성",
+      "latency_sec": 18.07,
+      "prompt_tokens": 82,
+      "completion_tokens": 99,
+      "tokens_per_sec": 5.48,
+      "content": ""
+    },
+    {
+      "id": "tool-02",
+      "category": "tool",
+      "title": "MCP 스키마 준수 응답",
+      "latency_sec": 13.93,
+      "prompt_tokens": 48,
+      "completion_tokens": 79,
+      "tokens_per_sec": 5.67,
+      "content": ""
+    },
+    {
+      "id": "long-01",
+      "category": "long",
+      "title": "긴 컨텍스트 요약",
+      "latency_sec": 74.77,
+      "prompt_tokens": 435,
+      "completion_tokens": 399,
+      "tokens_per_sec": 5.34,
+      "content": "\n\n### **결정사항**  \n1. **API 버전 전략 승인**: 박민수가 제안한 `/api/v2` 병행 운영"
+    },
+    {
+      "id": "agent-01",
+      "category": "agent",
+      "title": "다단계 계획 수립",
+      "latency_sec": 109.1,
+      "prompt_tokens": 66,
+      "completion_tokens": 599,
+      "tokens_per_sec": 5.49,
+      "content": "\n\n| **단계** | **목표/결과물** | **검증 방법** | **예상"
+    }
+  ]
+}
