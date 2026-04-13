@@ -1,0 +1,5 @@
+results/*.raw.json
+results/*.tmp
+*.log
+.DS_Store
+node_modules/
