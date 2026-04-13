@@ -1,0 +1,15 @@
+{
+  "_comment": "Claude Code에 로컬 LLM MCP 서버를 등록하는 설정 샘플. ~/.claude/settings.json 에 mcpServers 키로 병합하세요.",
+  "mcpServers": {
+    "local-llm": {
+      "command": "node",
+      "args": [
+        "/Users/cjons/gemma4-bench/scripts/mcp-local-llm.mjs"
+      ],
+      "env": {
+        "LM_STUDIO_URL": "http://localhost:1234/v1",
+        "LOCAL_LLM_MODEL": "qwen2.5-coder-14b-instruct"
+      }
+    }
+  }
+}
