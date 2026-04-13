@@ -1,0 +1,116 @@
+{
+  "model": "microsoft/phi-4",
+  "run_at": "2026-04-13T06:13:26Z",
+  "memory_mb": {
+    "before": 205,
+    "after": 76
+  },
+  "aggregate": {
+    "total_cases": 10,
+    "avg_tps": 5.617,
+    "avg_latency": 58.706,
+    "total_completion_tokens": 3352
+  },
+  "cases": [
+    {
+      "id": "code-01",
+      "category": "code",
+      "title": "LRU 캐시 TypeScript 구현",
+      "latency_sec": 70.7,
+      "prompt_tokens": 110,
+      "completion_tokens": 600,
+      "tokens_per_sec": 8.49,
+      "content": "아래는 TypeScript로 구현된 제네릭 LRU 캐시 클래스입니다. 이 클래스는 `get`, `set`, `size` 메서드를 지원하며, 용량 초과 시 가장 오래 사용되지 않은 항목을 제거합니다. 또한 O(1)의 성능을 보장하는 구조로 설계되었습니다.\n\n```typescript\n/**\n * LRU 캐시 클래스를 정의합니다.\n * @template T 캐시할 데이터 타입입니다.\n */\nclass LRUCache<T> {\n  private capacity: number;\n  private cache: Map<string, T>;\n  private order: string[];\n\n  /**\n   * 새로운 LRU 캐시 인스턴스를 생성합니다.\n   * @param {number} capacity 캐시의 용량입니다.\n   */\n  constructor(capacity: number) {\n    this.capacity = capacity;\n    this.cache = new Map<string, T>();\n    this.order = [];\n  }\n\n  /**\n   * 주어진 키에 해당하는 값을 가져옵니다.\n   * @param {string} key 검색할 키입니다.\n   * @returns {T | undefined} 캐시된 값이 있으면 그 값을 반환하고, 없으면 undefined를 반환합니다.\n   */\n  get(key: string): T | undefined {\n    if (!this.cache.has(key)) return undefined;\n\n    // 사용 순서 업데이트\n    this.order = this.order.filter(k => k !== key);\n    this.order.push(key);\n\n    return this.cache.get(key)!;\n  }\n\n  /**\n   * 주어진 키와 값 쌍을 캐시에 설정합니다.\n   * @param {string} key 설정할 키입니다.\n   * @param {T} value 설정할 값입니다.\n   */\n  set(key: string, value: T): void {\n    if (this.cache.has(key)) {\n      // 사용 순서 업데이트\n      this.order = this.order.filter(k => k !== key);\n    } else if (this.cache.size >= this.capacity) {\n      // 용량 초과 시 가장 오래된 항목 제거\n      const oldestKey = this.order.shift()!;\n      this.cache.delete(oldestKey);\n    }\n\n    this.cache.set(key, value);\n    this.order.push(key);\n  }\n\n  /**\n   * 현재 캐시에 저장된 항목의 수를 반환합니다.\n   * @returns {number} 캐시의 현재 크기입니다.\n   */\n  size(): number {\n    return this.cache.size;\n  }\n}\n\n// 단위 테스트 (Vitest 사용)\nimport { describe"
+    },
+    {
+      "id": "code-02",
+      "category": "code",
+      "title": "React useDebounce 훅",
+      "latency_sec": 60.63,
+      "prompt_tokens": 67,
+      "completion_tokens": 500,
+      "tokens_per_sec": 8.25,
+      "content": "React 19와 함께 TypeScript를 사용하여 `useDebounce` 커스텀 훅을 작성하려면, 주어진 함수가 지정된 딜레이 후에 호출되도록 하고, 메모리 누수를 방지하기 위해 적절한 클린업(logical cleanup)을 처리하는 것이 중요합니다. 이 훅은 `flush`와 `cancel` 메서드를 제공하여 딜레이된 함수 호출을 강제하거나 취소할 수 있도록 합니다.\n\n다음은 `useDebounce` 커스텀 훅의 구현과 사용 예시입니다:\n\n```tsx\nimport { useRef, useEffect, useCallback } from 'react';\n\n// useDebounce hook definition\nfunction useDebounce<T extends (...args: any[]) => void>(\n  fn: T,\n  delay: number = 300\n) {\n  const timeoutRef = useRef<NodeJS.Timeout | null>(null);\n\n  // Debounced function with flush and cancel methods\n  const debouncedFn = useCallback((...args: Parameters<T>) => {\n    if (timeoutRef.current !== null) {\n      clearTimeout(timeoutRef.current);\n    }\n\n    const handler = setTimeout(() => {\n      fn(...args);\n    }, delay);\n\n    timeoutRef.current = handler as NodeJS.Timeout;\n\n    // Return an object with flush and cancel methods\n    return {\n      flush: () => {\n        if (timeoutRef.current !== null) {\n          clearTimeout(timeoutRef.current);\n          fn(...args);\n        }\n      },\n      cancel: () => {\n        if (timeoutRef.current !== null) {\n          clearTimeout(timeoutRef.current);\n          timeoutRef.current = null;\n        }\n      }\n    };\n  }, [fn, delay]);\n\n  // Cleanup function to prevent memory leaks\n  useEffect(() => {\n    return () => {\n      if (timeoutRef.current !== null) {\n        clearTimeout(timeoutRef.current);\n      }\n    };\n  }, []);\n\n  return debouncedFn;\n}\n\n// Example usage 1: Debouncing a search input handler\nconst SearchComponent = () => {\n  const [query, setQuery] = React.useState('');\n\n  // Use the useDebounce hook to debounce the search function\n  const handleSearch = useDebounce((searchTerm) => {"
+    },
+    {
+      "id": "reason-01",
+      "category": "reasoning",
+      "title": "SQL 쿼리 문제 진단",
+      "latency_sec": 77.86,
+      "prompt_tokens": 133,
+      "completion_tokens": 450,
+      "tokens_per_sec": 5.78,
+      "content": "주어진 SQL 쿼리에는 몇 가지 성능 및 정확성 문제가 있습니다. 이를 단계별로 분석하고 해결 방안을 제시합니다.\n\n### 1) 예상되는 버그\n\n- **WHERE 조건과 LEFT JOIN의 충돌**: `LEFT JOIN`은 왼쪽 테이블(`users`)에 있는 모든 레코드를 결과 집합에 포함시키고, 오른쪽 테이블(`orders`)에 해당하는 레코드가 없는 경우 `NULL`을 반환합니다. 그러나 `WHERE o.created_at > '2025-01-01'` 조건은 `orders` 테이블의 `created_at` 컬럼이 `'2025-01-01'` 이후인 레코드만 포함하도록 하므로, `LEFT JOIN`으로 가져온 `NULL` 값들을 제외시키게 됩니다. 결과적으로 `users` 테이블에 있는 모든 사용자가 아닌, 해당 조건을 만족하는 `orders`를 가진 사용자만 포함될 수 있습니다.\n\n- **정확한 그룹화**: `GROUP BY u.id`는 정상적으로 작동하지만, `WHERE` 조건이 적용되면서 일부 사용자가 제외될 가능성이 있어 결과의 의도와 다를 수 있습니다.\n\n### 2) 인덱스 제안\n\n- **orders 테이블에 대한 인덱스**: `orders` 테이블에서 `(user_id, created_at)` 컬럼에 인덱스를 추가하면 조인과 필터링의 성능을 개선할 수 있습니다. 이는 `user_id`로"
+    },
+    {
+      "id": "reason-02",
+      "category": "reasoning",
+      "title": "알고리즘 복잡도 분석",
+      "latency_sec": 83.59,
+      "prompt_tokens": 138,
+      "completion_tokens": 400,
+      "tokens_per_sec": 4.79,
+      "content": "주어진 알고리즘은 배열에서 중복 요소를 찾는 것입니다. 다음은 시간 및 공간 복잡도 분석과 개선된 O(n) 해결책입니다.\n\n### 시간/공간 복잡도 분석\n\n1. **시간 복잡도:**\n   - 외부 `for` 루프는 배열의 길이에 대해 반복합니다 (`O(n)`).\n   - 내부 `for` 루프는 각 요소에 대해 나머지 배열을 검사하므로 최악의 경우 `O(n)`입니다.\n   - 따라서 이중 루프 자체가 `O(n^2)` 복잡도를 가집니다.\n   - 내부 조건에서 `arr[i] not in result` 검사는 리스트의 길이에 대해 선형 시간 (`O(m)`, 여기서 `m`은 현재까지 발견된 중복 요소의 수)을 필요로 합니다.\n   - 최악의 경우, 이 조건은 배열의 모든 요소에 대해 실행될 수 있으므로 추가적인 `O(n)` 복잡도를 도입합니다.\n\n   따라서 전체 시간 복잡도는 `O(n^3)`입니다. 왜냐하면:\n   - 두 번째 내부 조건 (`arr[i] not in result`)은 최악의 경우 배열의 모든 요소에 대해 실행될 수 있으므로, 이중 루프와 결합하여 `"
+    },
+    {
+      "id": "ko-01",
+      "category": "korean",
+      "title": "기술 문서 한국어 요약",
+      "latency_sec": 29.35,
+      "prompt_tokens": 111,
+      "completion_tokens": 152,
+      "tokens_per_sec": 5.18,
+      "content": "안녕하세요 개발 팀 여러분,\n\n중요한 변경 사항을 알려드립니다. auth-lib v3.0의 `authenticate()` 함수는 이제 콜백 대신 Promise를 반환합니다. 기존에 콜백 패턴을 사용하고 계시다면 런타임에서 오류가 발생할 수 있습니다. 마이그레이션 가이드에 따라 `util.promisify`로 기존 콜백을 감싸거나 async/await 문법으로 업데이트해 주세요.\n\n감사합니다!"
+    },
+    {
+      "id": "ko-02",
+      "category": "korean",
+      "title": "에러 메시지 친화 변환",
+      "latency_sec": 30.59,
+      "prompt_tokens": 80,
+      "completion_tokens": 150,
+      "tokens_per_sec": 4.9,
+      "content": "### 문제 설명\n\n컴퓨터가 로컬 서버에 연결할 수 없습니다.\n\n### 원인\n\n이 메시지는 컴퓨터가 자신의 내부 주소(127.0.0.1)에서 5432번 포트로 접속하려고 했을 때, 서버가 응답하지 않았다는 것을 나타냅니다. 일반적으로 이는 데이터베이스 서비스와 관련된 문제일 수 있습니다.\n\n### 해결 방법\n\n1. **PostgreSQL 서비스 시작"
+    },
+    {
+      "id": "tool-01",
+      "category": "tool",
+      "title": "함수 호출 JSON 생성",
+      "latency_sec": 9.18,
+      "prompt_tokens": 98,
+      "completion_tokens": 39,
+      "tokens_per_sec": 4.25,
+      "content": "```json\n{\n  \"name\": \"get_weather\",\n  \"parameters\": {\n    \"location\": \"서울\",\n    \"unit\": \"celsius\"\n  }\n}\n```"
+    },
+    {
+      "id": "tool-02",
+      "category": "tool",
+      "title": "MCP 스키마 준수 응답",
+      "latency_sec": 15.35,
+      "prompt_tokens": 51,
+      "completion_tokens": 80,
+      "tokens_per_sec": 5.21,
+      "content": "JSON-RPC 2.0 프로토콜에 따라 `read_file` 메소드를 호출하기 위한 요청은 다음과 같이 구성됩니다:\n\n```json\n{\n    \"jsonrpc\": \"2.0\",\n    \"method\": \"read_file\",\n    \"params\": {\n        \"path\": \"/tmp/config"
+    },
+    {
+      "id": "long-01",
+      "category": "long",
+      "title": "긴 컨텍스트 요약",
+      "latency_sec": 83.22,
+      "prompt_tokens": 566,
+      "completion_tokens": 381,
+      "tokens_per_sec": 4.58,
+      "content": "### 결정사항\n\n1. **API 버저닝 전략**: 박민수가 제안한 대로, `/api/v2`를 병행 운영하고 6개월 후 `v1`을 폐기하기로 만장일치 승인되었습니다.\n\n### 액션 아이템\n\n1. **김철수**: 결제 모듈 리팩터링의 2단계를 이번 주 목요일까지 완료합니다.\n   \n2. **이영희**: 사용자 테이블 인덱스 최적화 후 쓰기 성능에 대한 측정 보고서를 작성하고 제출합니다.\n\n3. **박민수**: \n   - GraphQL 전환 PoC 데모를 내일 진행합니다.\n   - `/api/v2` 마이그레이션 문서를 준비합니다.\n\n4. **정수진**: Kubernetes 업그레이드 중 발생한 파드 재시작 이슈의 근본 원인을 조사하고 보고합니다.\n\n### 미결 사항\n\n1. **실시간 알림 도입 방식**: 관리자 대시보드에 실시간 알림 추가 요청이 있으며, 김철수는 WebSocket 도입을 찬성하고 이영희는 SSE를 제안합니다. 결정은 다음 주로 미루어졌습니다."
+    },
+    {
+      "id": "agent-01",
+      "category": "agent",
+      "title": "다단계 계획 수립",
+      "latency_sec": 126.59,
+      "prompt_tokens": 89,
+      "completion_tokens": 600,
+      "tokens_per_sec": 4.74,
+      "content": "Next.js 프로젝트에 사용자 인증 기능을 추가하는 것은 여러 단계를 포함합니다. 아래는 이 작업을 5단계로 나눈 실행 계획입니다.\n\n| **단계** | **목표/결과물**                                                                                   | **검증 방법**                                                                                     | **예상 파일**                                                                                                                                 |\n|----------|--------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|\n| 1. 요구 사항 분석 및 계획 수립       | 사용자 인증의 목적과 기능을 정의하고, 필요한 도구와 라이브러리를 결정합니다.                   | 프로젝트 문서에 요구 사항 명세서 작성 및 스토리보드 검토.                                                                                         | `requirements.md`, `storyboard.png`                                                                                                          |\n| 2. 인증 라이브러리 선택 및 설치       | 사용자 인증을 위한 적절한 라이브러리(예: NextAuth.js)를 선택하고 프로젝트에 설치합니다.        | `package.json` 파일에서 라이브러리가 정상적으로 추가되었는지 확인.                                                                                  | `package.json`, `yarn.lock` or `package-lock.json`                                                                                           |\n| 3. 인증 로직 구현                   | 사용자 로그인, 로그아웃, 세션 관리 등의 기본 인증 로직을 구현합니다.                             | 로컬 개발 서버에서 로그인/로그아웃 테스트를 수행하여 기능이 정상 작동하는지 확인.                                                                    | `pages/api/auth/[...nextauth].js`, `components/LoginForm.js`                                                                                 |\n| 4. 인터페이스 구현 및 통합           | 사용자 인터페이스(UI)를 개발하여 로그인, 회원가입 등의 기능을 제공합니다.                       | 브라우저에서 UI 요소가 정상적으로 보이고 작동하는지 확인하며, 스타일링 및 사용자 경험 테스트를 수행합니다.                                        | `components/LoginForm.js`, `components/SignupForm.js`, `styles/auth.module.css`                                                              |\n| 5. 테스트 및 검증                   | 전체 인증 시스템을 종합"
+    }
+  ]
+}
