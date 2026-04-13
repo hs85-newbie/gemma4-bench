@@ -1,0 +1,72 @@
+[
+  {
+    "id": "code-01",
+    "category": "code",
+    "title": "LRU 캐시 TypeScript 구현",
+    "prompt": "TypeScript로 제네릭 LRU 캐시 클래스를 구현해줘. 요구사항:\n- get(key), set(key, value), size 메서드\n- 용량 초과 시 가장 오래 사용되지 않은 항목 제거\n- O(1) get/set 보장\n- 단위 테스트 포함 (Vitest)\n- JSDoc 주석 한국어로 작성",
+    "expected_tokens": 600
+  },
+  {
+    "id": "code-02",
+    "category": "code",
+    "title": "React useDebounce 훅",
+    "prompt": "React 19 + TypeScript로 useDebounce 커스텀 훅 작성. delay 옵션과 flush/cancel 메서드 노출. 메모리 누수 없도록 cleanup 처리. 사용 예시 2개 포함.",
+    "expected_tokens": 500
+  },
+  {
+    "id": "reason-01",
+    "category": "reasoning",
+    "title": "SQL 쿼리 문제 진단",
+    "prompt": "다음 SQL의 성능/정확성 문제를 찾아 단계별로 설명해줘:\n\nSELECT u.id, u.name, COUNT(o.id) as order_count\nFROM users u\nLEFT JOIN orders o ON u.id = o.user_id\nWHERE o.created_at > '2025-01-01'\nGROUP BY u.id\nORDER BY order_count DESC\nLIMIT 10;\n\n1) 예상되는 버그, 2) 인덱스 제안, 3) 수정된 쿼리를 제시해줘.",
+    "expected_tokens": 450
+  },
+  {
+    "id": "reason-02",
+    "category": "reasoning",
+    "title": "알고리즘 복잡도 분석",
+    "prompt": "다음 알고리즘의 시간/공간 복잡도를 분석하고 개선안을 제시해줘:\n\n```python\ndef find_duplicates(arr):\n    result = []\n    for i in range(len(arr)):\n        for j in range(i+1, len(arr)):\n            if arr[i] == arr[j] and arr[i] not in result:\n                result.append(arr[i])\n    return result\n```\n\n빅오 표기법으로 답하고, O(n) 해결책을 Python으로 작성해줘.",
+    "expected_tokens": 400
+  },
+  {
+    "id": "ko-01",
+    "category": "korean",
+    "title": "기술 문서 한국어 요약",
+    "prompt": "다음 기술 변경 사항을 개발 팀 공지용 한국어 요약으로 3문장 이내로 작성해줘. 존댓말 사용:\n\nBREAKING CHANGE: The authenticate() function in auth-lib v3.0 now returns a Promise instead of a callback. All existing callers using the callback pattern will break at runtime. Migration guide: wrap existing callbacks with util.promisify or update to async/await syntax.",
+    "expected_tokens": 200
+  },
+  {
+    "id": "ko-02",
+    "category": "korean",
+    "title": "에러 메시지 친화 변환",
+    "prompt": "다음 기술적 에러 메시지를 일반 사용자용 한국어 안내문으로 바꿔줘. 해결 액션 1개 포함:\n\n\"ECONNREFUSED: connect ECONNREFUSED 127.0.0.1:5432 at TCPConnectWrap.afterConnect\"",
+    "expected_tokens": 150
+  },
+  {
+    "id": "tool-01",
+    "category": "tool",
+    "title": "함수 호출 JSON 생성",
+    "prompt": "아래 함수 스키마에 따라 '서울 날씨 알려줘' 요청에 대한 tool call JSON만 출력해. 다른 설명 없이 JSON만.\n\n스키마:\n{\n  \"name\": \"get_weather\",\n  \"parameters\": {\n    \"location\": \"string\",\n    \"unit\": \"celsius|fahrenheit\"\n  }\n}",
+    "expected_tokens": 100
+  },
+  {
+    "id": "tool-02",
+    "category": "tool",
+    "title": "MCP 스키마 준수 응답",
+    "prompt": "MCP tool 'read_file' 호출을 위한 JSON-RPC 2.0 요청을 생성해. path는 '/tmp/config.json'. id는 1. 순수 JSON만 출력.",
+    "expected_tokens": 80
+  },
+  {
+    "id": "long-01",
+    "category": "long",
+    "title": "긴 컨텍스트 요약",
+    "prompt": "다음 회의록을 3개 섹션(결정사항/액션아이템/미결사항)으로 정리해줘:\n\n[회의록 시작] 2026-04-10 백엔드 팀 주간 미팅. 참석자: 김철수(리드), 이영희(DB), 박민수(API), 정수진(인프라). 지난주 진행사항 리뷰부터 시작. 김철수: 결제 모듈 리팩터링 1단계 완료, 2단계는 이번주 목요일까지. 이영희: 사용자 테이블 인덱스 최적화로 조회 속도 3배 개선됨. 하지만 쓰기 성능이 15% 저하되어 모니터링 필요. 박민수: REST에서 GraphQL 전환 PoC 완료, 팀 내 데모 내일 예정. 정수진: Kubernetes 업그레이드 중 파드 재시작 이슈 발생, 원인 파악 중. 다음 안건으로 넘어감. 신규 기능 요구사항 논의: 관리자 대시보드에 실시간 알림 추가 요청 있음. 김철수는 WebSocket 도입 찬성, 이영희는 SSE 제안(구현 단순). 결정 보류, 다음 주 결정. 박민수는 API 버저닝 전략 제안: /api/v2 병행 운영 6개월 후 v1 폐기. 만장일치 승인. 액션아이템: 김철수는 결제 모듈 2단계 완료, 이영희는 쓰기 성능 측정 보고서 작성, 박민수는 GraphQL 데모 및 v2 마이그레이션 문서, 정수진은 Kubernetes 이슈 근본 원인 조사. 회의 종료 [회의록 끝]",
+    "expected_tokens": 400
+  },
+  {
+    "id": "agent-01",
+    "category": "agent",
+    "title": "다단계 계획 수립",
+    "prompt": "'Next.js 프로젝트에 사용자 인증 추가' 작업을 5단계 실행 계획으로 나눠. 각 단계에 '목표/결과물/검증 방법/예상 파일'을 포함. 마크다운 표로 작성.",
+    "expected_tokens": 600
+  }
+]
