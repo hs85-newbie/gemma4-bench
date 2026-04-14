@@ -14,11 +14,12 @@
 #
 # 환경변수:
 #   ANTHROPIC_API_KEY    Claude Haiku 사용 시 필요
-#   DISPATCHER_MODEL     로컬 폴백 모델 (기본 qwen/qwen3-8b)
+#   DISPATCHER_MODEL     로컬 폴백 모델 (기본 gemma-4-26b-a4b-it)
 #   LM_STUDIO_URL        기본 http://localhost:1234/v1
 #
-# 주의: Qwen 3 계열은 reasoning 모델이므로 max_tokens 가 충분해야 한다
-#       (thinking 토큰 + 최종 JSON 응답 동시 수용). 기본 800.
+# 주의: Qwen 3 계열을 디스패처로 쓰면 reasoning 모드 때문에 60초 이상
+#       걸림. Gemma 4 (비 reasoning) 를 기본으로 사용하는 것이 훨씬 빠름.
+#       Qwen 3 사용 시 max_tokens 는 자동 처리되지만 curl timeout 180s 필요.
 
 set -euo pipefail
 
@@ -105,7 +106,7 @@ fi
 
 # ─── 로컬 LLM 폴백 경로 ──────────────────────────
 URL="${LM_STUDIO_URL:-http://localhost:1234/v1}"
-MODEL="${DISPATCHER_MODEL:-qwen/qwen3-8b}"
+MODEL="${DISPATCHER_MODEL:-gemma-4-26b-a4b-it}"
 
 if ! curl -sf -m 3 "$URL/models" >/dev/null 2>&1; then
   echo "error: Anthropic API key 없고 LM Studio 서버도 응답 없음" >&2
@@ -128,7 +129,7 @@ PAYLOAD=$(jq -n \
     stream: false
   }')
 
-RESPONSE=$(curl -sf -m 60 "$URL/chat/completions" \
+RESPONSE=$(curl -sf -m 180 "$URL/chat/completions" \
   -H "Content-Type: application/json" \
   -d "$PAYLOAD") || {
   echo "error: 로컬 LLM 호출 실패" >&2
