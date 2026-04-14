@@ -1,0 +1,253 @@
+# gemma4-bench 라우팅 룰
+#
+# 작업 유형을 티어(모델)로 매핑하는 기계 판독 가능 설정 파일.
+# dispatch.sh 가 이 파일을 읽어 분류 결정을 내린다.
+#
+# 5-tier 하이브리드 구조:
+#   T1: Claude Opus 4.6       (cloud, highest quality, most expensive)
+#   T2: Claude Sonnet 4.6     (cloud, balanced)
+#   T3: Claude Haiku 4.5      (cloud, cheap, fast dispatcher)
+#   T4a: Gemma 4 26B A4B      (local MoE, generalist)
+#   T4b: Qwen2.5-Coder 14B    (local, code specialist)
+#   T5: Qwen 3 8B             (local, lightweight)
+
+version: 1
+updated: 2026-04-14
+
+# ─────────────────────────────────────────────────
+# 티어 정의
+# ─────────────────────────────────────────────────
+tiers:
+  T1:
+    name: "Claude Opus 4.6"
+    provider: anthropic
+    model: claude-opus-4-6
+    cost_per_1m_input_tokens: 15.00
+    cost_per_1m_output_tokens: 75.00
+    context_window: 1000000
+    tool_use_quality: 10
+    speed: slow
+    role: orchestrator
+
+  T2:
+    name: "Claude Sonnet 4.6"
+    provider: anthropic
+    model: claude-sonnet-4-6
+    cost_per_1m_input_tokens: 3.00
+    cost_per_1m_output_tokens: 15.00
+    context_window: 200000
+    tool_use_quality: 9
+    speed: medium
+    role: workhorse
+
+  T3:
+    name: "Claude Haiku 4.5"
+    provider: anthropic
+    model: claude-haiku-4-5-20251001
+    cost_per_1m_input_tokens: 1.00
+    cost_per_1m_output_tokens: 5.00
+    context_window: 200000
+    tool_use_quality: 8
+    speed: fast
+    role: dispatcher
+
+  T4a:
+    name: "Gemma 4 26B A4B"
+    provider: lm_studio
+    model: gemma-4-26b-a4b-it
+    cost_per_1m_input_tokens: 0.00
+    cost_per_1m_output_tokens: 0.00
+    context_window: 32000
+    tool_use_quality: 5
+    speed: fast
+    measured_tok_per_sec: 10.14
+    role: local_generalist
+    memory_gb: 14.82
+    profile: GENERALIST
+
+  T4b:
+    name: "Qwen2.5-Coder 14B"
+    provider: lm_studio
+    model: qwen/qwen2.5-coder-14b
+    cost_per_1m_input_tokens: 0.00
+    cost_per_1m_output_tokens: 0.00
+    context_window: 32000
+    tool_use_quality: 6
+    speed: medium
+    measured_tok_per_sec: 8.79
+    role: local_coder
+    memory_gb: 8.33
+    profile: CODER
+
+  T5:
+    name: "Qwen 3 8B"
+    provider: lm_studio
+    model: qwen/qwen3-8b
+    cost_per_1m_input_tokens: 0.00
+    cost_per_1m_output_tokens: 0.00
+    context_window: 32000
+    tool_use_quality: 5
+    speed: very_fast
+    role: local_lightweight
+    memory_gb: 4.62
+    profile: BOTH  # GENERALIST 및 CODER 프로파일 양쪽에 상주
+
+# ─────────────────────────────────────────────────
+# 라우팅 룰 (작업 유형 → 티어)
+# primary: 1차 담당
+# escalate: 실패/저신뢰 시 올라갈 티어
+# keywords: 자동 분류 힌트 (dispatch.sh 가 참조)
+# ─────────────────────────────────────────────────
+routes:
+  # Tier 1 전담 — 설계·판단·복잡
+  architecture_decision:
+    primary: T1
+    escalate: null
+    keywords: [architecture, 설계, 스키마, schema, 구조, design decision]
+
+  complex_debugging:
+    primary: T1
+    escalate: null
+    keywords: [장애, 디버깅, 원인불명, incident, rootcause, 근본원인]
+
+  cross_file_refactor:
+    primary: T1
+    escalate: null
+    keywords: [리팩터링, refactor, 전면수정, cross-file, 재구조화]
+
+  session_planning:
+    primary: T1
+    escalate: null
+    keywords: [계획, 로드맵, plan, roadmap, 전략]
+
+  security_audit:
+    primary: T1
+    escalate: null
+    keywords: [보안, CVE, 취약점, security, vulnerability, audit]
+
+  # Tier 2 — 일반 구현·리뷰
+  feature_implementation:
+    primary: T2
+    escalate: T1
+    keywords: [기능 추가, 구현, feature, endpoint, API 추가]
+
+  code_review:
+    primary: T2
+    escalate: T1
+    keywords: [리뷰, review, PR, diff 검토]
+
+  medium_bug_fix:
+    primary: T2
+    escalate: T1
+    keywords: [버그, bug fix, 수정, 오류]
+
+  migration:
+    primary: T2
+    escalate: T1
+    keywords: [마이그레이션, migration, 업그레이드, version bump]
+
+  # Tier 3 — 분류·빠른 수정
+  task_classification:
+    primary: T3
+    escalate: T2
+    keywords: [분류, 라우팅, dispatch, classify]
+
+  single_file_tweak:
+    primary: T3
+    escalate: T2
+    keywords: [오타, 포맷, formatting, 타입 수정, rename]
+
+  log_summary:
+    primary: T3
+    escalate: T2
+    keywords: [로그, log, 에러 요약, stacktrace 요약]
+
+  # Tier 4a — 로컬 범용
+  document_generation:
+    primary: T4a
+    escalate: T3
+    keywords: [문서, documentation, README, 가이드, guide]
+
+  long_summary:
+    primary: T4a
+    escalate: T2
+    keywords: [요약, summarize, 회의록, 긴 문서, long context]
+
+  translation:
+    primary: T4a
+    escalate: T5
+    keywords: [번역, translate, 한국어화, localization]
+
+  boilerplate:
+    primary: T4a
+    escalate: T4b
+    keywords: [보일러플레이트, boilerplate, 템플릿, scaffold]
+
+  # Tier 4b — 로컬 코드 전문
+  bulk_code_generation:
+    primary: T4b
+    escalate: T2
+    keywords: [대량 코드, bulk code, 함수 구현, 메서드 추가]
+
+  test_generation:
+    primary: T4b
+    escalate: T2
+    keywords: [테스트, test, unit test, vitest, jest, 단위 테스트]
+
+  type_definition:
+    primary: T4b
+    escalate: T2
+    keywords: [타입, type, interface, TypeScript 타입, schema 타입]
+
+  # Tier 5 — 초단순·초고속
+  commit_message:
+    primary: T5
+    escalate: T3
+    keywords: [커밋 메시지, commit message, commit msg]
+
+  comment_translation:
+    primary: T5
+    escalate: T4a
+    keywords: [주석 번역, JSDoc 한국어, 주석 한국어화]
+
+  string_transform:
+    primary: T5
+    escalate: null
+    keywords: [문자열 변환, case 변환, snake case, camelCase]
+
+# ─────────────────────────────────────────────────
+# 에스컬레이션 정책
+# ─────────────────────────────────────────────────
+escalation_policy:
+  # 1차 담당이 실패했을 때 상위 티어로 넘기는 조건
+  triggers:
+    - type: timeout
+      threshold_sec: 120
+      action: escalate
+    - type: output_empty
+      action: escalate
+    - type: output_contains
+      pattern: "I cannot|unable to|don't know"
+      action: escalate
+    - type: user_reject
+      action: escalate
+
+  max_escalations: 2  # 한 태스크당 최대 상향 횟수
+
+# ─────────────────────────────────────────────────
+# 메모리 프로파일 (24GB 제약)
+# ─────────────────────────────────────────────────
+profiles:
+  GENERALIST:
+    description: "문서·번역·요약·범용 작업 세션"
+    main: T4a
+    sub: T5
+    total_memory_gb: 19.44
+    switch_script: scripts/profile-generalist.sh
+
+  CODER:
+    description: "코드 생성·테스트·타입 집중 세션"
+    main: T4b
+    sub: T5
+    total_memory_gb: 12.95
+    switch_script: scripts/profile-coder.sh
