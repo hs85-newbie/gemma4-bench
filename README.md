@@ -239,6 +239,17 @@ ask-local "Python으로 피보나치 함수 작성. 주석 한국어."
 ```
 Claude Code 재시작 → `mcp__local-llm__local_llm_generate` 툴 사용 가능.
 
+> **💡 Claude Max 구독자 안내**
+> `ANTHROPIC_API_KEY` / `~/.anthropic/env` 설정은 **건너뛰어도 됩니다**. Max 구독은 **Claude.ai · Claude Code 만 커버**하고 Anthropic API (토큰당 과금) 는 **별도 결제**라 일반 Max 사용자에겐 키가 없습니다.
+>
+> 그럼에도 **5-티어 아키텍처는 100% 작동**합니다:
+> - **T1 Opus / T2 Sonnet / T3 Haiku** → Claude Code 세션의 `Agent(model="...")` 서브에이전트로 호출 (Max 커버)
+> - **T4a Gemma 4 / T4b Qwen Coder / T5 Qwen 3 8B** → `ask-local` 또는 MCP 로 LM Studio 로컬 호출
+>
+> `dispatch.sh` 스크립트는 `ANTHROPIC_API_KEY` 미설정 시 **자동으로 로컬 폴백(Gemma 4)** 을 사용하므로 에러 없이 동작합니다. 독립 셸 유틸로는 응답이 15~30초 걸리지만, Claude Code 세션 내부에선 어차피 Opus 가 직접 판단·위임하므로 dispatch.sh 사용 빈도 자체가 낮습니다.
+>
+> **결론**: Max 구독만으로 이 레포 전체 컨셉을 그대로 사용 가능. API 키는 선택 사항.
+
 ### 6. 벤치마크 재실행
 ```bash
 ./scripts/bench-run.sh "gemma-4-26b-a4b-it" "results/$(date +%F)"

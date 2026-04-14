@@ -2,8 +2,13 @@
 # dispatch — 작업 설명을 받아 티어(모델) 결정을 JSON으로 반환
 #
 # 우선순위:
-#   1) ANTHROPIC_API_KEY 가 있으면 Claude Haiku 로 분류 (권장)
-#   2) 없으면 로컬 LLM (기본 qwen/qwen3-8b) 로 폴백
+#   1) ANTHROPIC_API_KEY 가 있으면 Claude Haiku 로 분류 (0.5s 수준)
+#   2) 없으면 로컬 LLM (기본 gemma-4-26b-a4b-it) 로 폴백 (15~30s)
+#
+# Claude Max 구독자 안내:
+#   Max 구독은 Claude Code 만 커버하고 API 는 별도 결제입니다.
+#   API 키 없이도 로컬 폴백으로 동작하며, 실전에서 dispatch.sh 독립 사용은
+#   드물고 Claude Code 세션 내에선 Opus 가 직접 디스패치하므로 무관합니다.
 #
 # 용법:
 #   ./dispatch.sh "사용자 테이블에 deleted_at 컬럼 추가하고 soft delete 쿼리 수정"

@@ -22,6 +22,10 @@ tiers:
     name: "Claude Opus 4.6"
     provider: anthropic
     model: claude-opus-4-6
+    # 접근 경로:
+    #  - Claude Code 세션 (Max 구독 커버)
+    #  - 또는 Anthropic API (토큰당 과금, 별도 결제)
+    access: [claude_code_session, anthropic_api]
     cost_per_1m_input_tokens: 15.00
     cost_per_1m_output_tokens: 75.00
     context_window: 1000000
@@ -33,6 +37,10 @@ tiers:
     name: "Claude Sonnet 4.6"
     provider: anthropic
     model: claude-sonnet-4-6
+    # 접근 경로:
+    #  - Agent(subagent_type=..., model="sonnet") (Max 구독 커버)
+    #  - 또는 Anthropic API (토큰당 과금)
+    access: [claude_code_agent_subagent, anthropic_api]
     cost_per_1m_input_tokens: 3.00
     cost_per_1m_output_tokens: 15.00
     context_window: 200000
@@ -44,6 +52,12 @@ tiers:
     name: "Claude Haiku 4.5"
     provider: anthropic
     model: claude-haiku-4-5-20251001
+    # 접근 경로:
+    #  - Agent(subagent_type=..., model="haiku") (Max 구독 커버)
+    #  - 또는 Anthropic API (토큰당 과금, dispatch.sh 에서 사용)
+    # 주의: Max 구독자는 dispatch.sh 의 Haiku 경로를 쓸 수 없고
+    #       로컬 Gemma 4 폴백으로 대체됨 (15~30초 레이턴시)
+    access: [claude_code_agent_subagent, anthropic_api]
     cost_per_1m_input_tokens: 1.00
     cost_per_1m_output_tokens: 5.00
     context_window: 200000
