@@ -280,20 +280,52 @@ python3 scripts/bench-summarize.py "results/$(date +%F)"
 
 ## 🗺️ 로드맵
 
+### ✅ 완료
+
 - [x] LM Studio + `lms` CLI 기반 자동화
-- [x] ask-local shell 래퍼 (Bash 툴 통합)
+- [x] `ask-local` shell 래퍼 (Bash 툴 통합)
 - [x] Node 기반 MCP 서버 (Claude Code 네이티브 통합)
 - [x] 벤치마크 프레임워크 (10 케이스 × 6 카테고리)
 - [x] 3종 모델 비교 (Qwen 3 14B / Phi-4 / Gemma 4 26B A4B)
 - [x] 6모델 하이브리드 아키텍처 설계
-- [ ] 프로파일 스위치 스크립트 2종 (generalist / coder)
-- [ ] Haiku 디스패처 에이전트 프로토타입
-- [ ] 라우팅 룰 파일 (`config/router.yaml`)
-- [ ] 비용 로거 (티어별 호출 빈도·누적 비용 기록)
-- [ ] Qwen2.5-Coder 14B 포함 4종 코딩 전용 재벤치
-- [ ] Thinking OFF Qwen 3 재벤치 (공정 비교)
-- [ ] MLX Gemma 4 공개 시 재벤치
-- [ ] 메모리 측정 스크립트 `footprint` 기반 교체
+- [x] 프로파일 스위치 스크립트 2종 (`scripts/profile-generalist.sh`, `scripts/profile-coder.sh`)
+- [x] 라우팅 룰 파일 (`config/router.yaml`)
+- [x] Haiku 디스패처 프로토타입 (`scripts/dispatch.sh` + `config/dispatcher-prompt.md`)
+- [x] Related Work 섹션 (생태계 연계 — claude-knowledge-graph)
+
+### 🔥 다음 (실사용·운영 검증)
+
+이론 검증은 끝났고, 여기부터는 **실제 작업에 투입해 데이터를 쌓는 단계**.
+
+- [ ] **Claude Code 에서 실전 투입** — 이 레포 이후 실제 코딩 세션에서 `ask-local` / MCP 사용하기 (가장 중요)
+- [ ] **Haiku 디스패처 실제 API 연동 검증** — `ANTHROPIC_API_KEY` 설정 후 Haiku 응답 속도·정확도 확인 (현재 Qwen 3 8B 폴백만 검증됨)
+- [ ] **비용 로거** — 티어별 호출 빈도·토큰·누적 비용 기록 → 한 달 뒤 70% 절감 가설 실측 검증
+- [ ] **라우터 룰 사용자 맞춤화** — 22개 기본 카테고리를 실사용 패턴에 맞게 줄이거나 추가 (실사용 중 점진 개선)
+
+### 💡 장기 (실사용이 안착된 후)
+
+- [ ] **Observability 대시보드** — 비용 로거 데이터를 그래프화. 티어별 사용 비율, 절감액 트렌드
+- [ ] **프로파일 자동 스위치** — 세션 맥락(파일 확장자·작업 유형) 감지 후 GENERALIST/CODER 자동 전환
+- [ ] **라우터 피드백 학습** — 사용자가 티어 결정을 override 할 때 그 피드백을 축적해 dispatcher few-shot 자동 갱신
+- [ ] **다른 Apple Silicon 스펙 이식성 검증** — M1/M3, 8GB/16GB/48GB 등 다양한 메모리에서 동작 확인
+
+### 🎟️ 릴리스 트래커 (이벤트 기반, 로드맵 아님)
+
+- [ ] `mlx-community/gemma-4-26b-a4b` MLX 공식 포맷 공개 시 → 단순 교체, 재벤치 불필요
+
+---
+
+### ❌ 의도적으로 하지 않는 것
+
+초기 문서에는 아래 항목이 있었으나, **결론(Gemma 4 승) 이 바뀌지 않는 완전성 편향 작업** 이라 제거:
+
+| 제거 항목 | 사유 |
+|---|---|
+| Qwen2.5-Coder 포함 4종 코딩 재벤치 | Task 1 에서 Coder 단독 8.79 tok/s 이미 측정 → Gemma 10.14 우위 확정 |
+| Thinking OFF Qwen 3 재벤치 | 예상 8 tok/s 로 개선되어도 Gemma 10.14 를 못 따라잡음 |
+| 메모리 측정 스크립트 footprint 교체 | 재벤치 안 하면 죽은 코드 수정. 진짜 필요할 때 인라인 수정 |
+
+> **교훈**: 재벤치는 "결론이 바뀔 가능성이 있을 때" 만 하는 것이 원칙. 그 외는 엔지니어 습관으로 인한 시간 낭비.
 
 ---
 
