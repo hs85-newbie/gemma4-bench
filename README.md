@@ -393,10 +393,15 @@ python3 scripts/bench-summarize.py "results/$(date +%F)"
 
 #### 통합 시나리오 (미래)
 
+- [x] **LM Studio 재사용 통합 설계 완료** → 상세: [`docs/integration-claude-knowledge-graph.md`](docs/integration-claude-knowledge-graph.md)
+  - 별도 llama-server spawn 없이 gemma4-bench 의 Gemma 4 를 재사용
+  - 필요한 것: `qwen_processor.py` 에 3줄 패치 + 환경변수 3개
+  - 추가 메모리 0 GB, 추가 런타임 프로세스 0개
+  - 실제 설치는 Phase 1 실사용 검증(30일) 이후
 - [ ] `ask-local` 호출 로그를 claude-knowledge-graph 가 캡처해 "어떤 위임이 효과적이었는지" 검색 가능
 - [ ] `config/router.yaml` 의 라우팅 결정을 Obsidian 에 기록 → 시간 따라 라우터 룰 최적화에 활용
-- [ ] 두 프로젝트의 로컬 LLM 모델 공유 (llama.cpp ↔ LM Studio GGUF 공용)
 - [ ] `dispatch.sh` 가 Obsidian 에서 과거 유사 작업 티어 결정을 RAG 로 참조
+- [ ] 업스트림(NAMYUNWOO/claude-knowledge-graph) 에 `CKG_BASE_URL` 환경변수 PR 제안
 
 ---
 
