@@ -305,6 +305,69 @@ python3 scripts/bench-summarize.py "results/$(date +%F)"
 
 ---
 
+## 🔗 Related Work — 생태계
+
+### [claude-knowledge-graph](https://github.com/NAMYUNWOO/claude-knowledge-graph) by @NAMYUNWOO
+
+**상호 보완적인 프로젝트**. gemma4-bench 가 "작업 실행 오케스트레이션" 을 다룬다면, claude-knowledge-graph 는 "그 작업에서 나온 지식의 자동 캡처·구조화" 를 담당합니다.
+
+| 축 | gemma4-bench | claude-knowledge-graph |
+|---|---|---|
+| 목적 | **작업 실행** 하이브리드 오케스트레이션 | **세션 지식** 자동 캡처·Obsidian 그래프 |
+| 로컬 LLM | Gemma 4 26B A4B + Qwen Coder 14B + Qwen 3 8B | Qwen 3.5 4B (태그·요약) + Qwen3-Embedding (검색) |
+| 런타임 | LM Studio (GUI + `lms` CLI) | llama.cpp (llama-server) |
+| Claude Code 통합 | MCP server + Bash 래퍼 (`ask-local`) | Hooks (`UserPromptSubmit`, `Stop`) |
+| 결과물 | 코드·문서·테스트 (실행) | Obsidian 지식 그래프 (아카이브) |
+| 철학 | "Claude 두뇌 + 로컬 손발" | "세션 지식 자동 아카이브" |
+
+#### 왜 같이 쓰면 좋은가
+
+```
+┌────────────────────────────────────────────────────────────┐
+│                    Claude Code 세션                         │
+│                                                            │
+│   사용자 질문 ─► Opus 오케스트레이션 ─► 결과물            │
+│           │            │                                   │
+│           │            ├─ gemma4-bench                     │
+│           │            │  (로컬 LLM 에 반복 작업 위임)    │
+│           │            │  Gemma 4 / Qwen Coder / Qwen 3 8B │
+│           │            │                                   │
+│           ▼            ▼                                   │
+│   UserPromptSubmit    Stop                                 │
+│   Hook                Hook                                 │
+│           │            │                                   │
+│           └────────────┴───► claude-knowledge-graph        │
+│                              (Qwen 3.5 4B 로 태그·요약)   │
+│                              │                             │
+│                              ▼                             │
+│                     Obsidian vault                         │
+│                     (검색·회고 가능한 지식 그래프)          │
+└────────────────────────────────────────────────────────────┘
+```
+
+- **gemma4-bench 가 "실행 엔진"** — 세션 내에서 Claude 가 로컬 LLM 에 반복 작업을 위임해 토큰·시간 절약
+- **claude-knowledge-graph 가 "기억 엔진"** — 세션 종료 시 Q&A 전체를 로컬 LLM 으로 태깅·요약해 영속화
+- 두 레이어는 **서로 독립적으로 동작** 하며, 각자의 로컬 LLM 모델·런타임을 가짐 (llama.cpp 와 LM Studio 공존 가능)
+- **공통 철학**: "민감 데이터는 로컬에 유지", "반복 작업은 비싼 Claude 를 쓰지 않는다", "Apple Silicon 최적화"
+
+#### 메모리 공존 고려사항
+
+두 도구를 동시에 돌리면 **로컬 LLM 이 더 많이 상주** 합니다:
+- gemma4-bench GENERALIST 프로파일: ~19.4 GB (Gemma 4 + Qwen 3 8B)
+- claude-knowledge-graph: ~2.5 GB (Qwen 3.5 4B) + ~1 GB (Qwen3-Embedding)
+- **합계 ~23 GB** → 24 GB M2 Air 에서는 아슬아슬
+
+**권장**: claude-knowledge-graph 의 `min_ram_gb` 설정을 낮추거나, gemma4-bench CODER 프로파일(12.95 GB) 을 기본으로 사용하면 여유 확보.
+
+#### 통합 시나리오 (미래)
+
+- [ ] `ask-local` 호출 로그를 claude-knowledge-graph 가 캡처해 "어떤 위임이 효과적이었는지" 검색 가능
+- [ ] `config/router.yaml` 의 라우팅 결정을 Obsidian 에 기록 → 시간 따라 라우터 룰 최적화에 활용
+- [ ] 두 프로젝트의 로컬 LLM 모델 공유 (llama.cpp ↔ LM Studio GGUF 공용)
+- [ ] `dispatch.sh` 가 Obsidian 에서 과거 유사 작업 티어 결정을 RAG 로 참조
+
+---
+
 ## 📜 라이선스
 
 MIT
